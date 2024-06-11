@@ -1,18 +1,26 @@
 "use client";
 
+import React from "react";
+import Loading from "../../../../components/loading";
+import { useGlobalState } from "../../../../store/global";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-import { useGlobalState } from "../../../../store/global";
-import Loading from "../../../../components/loading";
 
-export default function Apply() {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const Application = () => {
   const { token, setIsLoading, isLoading } = useGlobalState();
+  const router = useRouter();
+  const { id } = useParams();
   const [applications, setApplications] = useState([]);
+  const [modalAppId, setModalAppId] = useState(null);
 
   useEffect(() => {
     if (token) {
       fetchApplications();
+    } else {
+      router.push("/login");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -39,59 +47,91 @@ export default function Apply() {
     }
   };
 
-  const handleViewAdvert = (id) => {
-    router.push(`/applications/${id}`);
-  };
-
-  const handleViewApplicants = (id) => {
-    router.push(`/applications/${id}/applicants`);
-  };
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
-    <section className="w-screen flex justify-center items-start h-screen py-20 bg-info">
+    <div className="w-screen flex justify-center items-start py-20 bg-base-100">
       <div className="overflow-x-auto">
-        <h1 className="text-2xl font-bold mb-6">İlana Başvuranlar</h1>
+        <h1 className="text-2xl font-bold mb-6">Stajyerler</h1>
         {isLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : applications.length === 0 ? (
-          <p>No applications available.</p>
+          <>
+            {" "}
+            <p>Stajyer bulunamadı.</p>{" "}
+            <button
+              className="px-4 mt-5 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+              onClick={() => router.back()}>
+              Geri
+            </button>
+          </>
         ) : (
-          <table className="table table-zebra bg-primary">
-            {/* head */}
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Adayın İsmi</th>
-                <th>Adayın Soysismi</th>
-                <th>Adayın Eşleşme Skoru</th>
-                <th>İşlem</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((advert, index) => (
-                <tr key={advert._id}>
-                  <th>{index + 1}</th>
-                  <td className="capitalize font-bold text-xl">{advert.title}</td>
-                  <td>
-                    <button onClick={() => handleViewAdvert(advert._id)} className="btn btn-info">
-                      İlanı Görüntüle
-                    </button>
-                  </td>
-                  <td>
-                    <button onClick={() => handleViewApplicants(advert._id)} className="btn btn-success">
-                      İlana Başvuranlar
-                    </button>
-                  </td>
+          <>
+            {" "}
+            <table className="table table-zebra bg-base-200">
+              <thead>
+                <tr className="text-center">
+                  <th>#</th>
+                  <th>Stajyer İsmi</th>
+                  <th>Stajyer Soysismi</th>
+                  <th>İlan İsmi</th>
+                  <th>Değerlendirmede</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {applications
+                  .filter((app) => app.status === "accepted")
+                  .map((application, index) => (
+                    <tr key={application._id} className="text-center">
+                      <th>{index + 1}</th>
+                      <td className="capitalize font-bold text-xl">{application.intern.firstName}</td>
+                      <td className="capitalize font-bold text-xl">{application.intern.lastName}</td>
+                      <td className="capitalize font-bold text-xl">{application.advert.company.companyName}</td>
+                      <td>
+                        <button
+                          onClick={() => setModalAppId(application._id)}
+                          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                          Değerlendirmede
+                        </button>
+                        {modalAppId === application._id && (
+                          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                            <div className="bg-white p-8 rounded-lg">
+                              <h2 className="text-2xl font-bold mb-4">Değerlendirme</h2>
+                              <textarea
+                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                                rows="4"
+                                placeholder="Değerlendirme" />
+                              <select className="w-full p-2 border border-gray-300 rounded-md mb-4">
+                                <option value="">Pounla</option>
+                                {Array.from({ length: 5 }, (_, i) => (
+                                  <option key={i + 1} value={i + 1}>
+                                    {i + 1}
+                                  </option>
+                                ))}
+                              </select>
+                              <div className="flex justify-end">
+                                <button
+                                  onClick={() => setModalAppId(null)}
+                                  className="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 mr-2">
+                                  Geri
+                                </button>
+                                <button
+                                  onClick={() => handleSaveRating(application._id)}
+                                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                  Kaydet
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default Application;

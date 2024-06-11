@@ -22,11 +22,11 @@ export default function AdvertDetail() {
 
   useEffect(() => {
     if (!token) {
-      // router.push("/");
+      router.push("/");
     } else {
       fetchAdvertDetail();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, router]);
 
   const fetchAdvertDetail = async () => {
@@ -43,8 +43,8 @@ export default function AdvertDetail() {
         setFormValues({
           title: data.advert.title,
           field: data.advert.field,
-          requirements: data.advert.requirements.join(", "),
-          foreignLanguages: data.advert.foreignLanguages.join(", "),
+          requirements: data.advert.requirements,
+          foreignLanguages: data.advert.foreignLanguages,
           department: data.advert.department,
         });
       } else {
@@ -76,8 +76,8 @@ export default function AdvertDetail() {
         body: JSON.stringify({
           title: formValues.title,
           field: formValues.field,
-          requirements: formValues.requirements.split(",").map((req) => req.trim()),
-          foreignLanguages: formValues.foreignLanguages.split(",").map((lang) => lang.trim()),
+          requirements: formValues.requirements,
+          foreignLanguages: formValues.foreignLanguages,
           department: formValues.department,
         }),
       });
@@ -102,59 +102,83 @@ export default function AdvertDetail() {
   }
 
   return (
-    <section className="w-screen flex justify-center items-start h-screen py-20 bg-base-100">
-      <div className="max-w-md p-6 bg-base-200 rounded-lg flex flex-col gap-4">
+    <section className="w-screen flex justify-center items-start py-20 bg-base-100">
+      <div className=" p-6 bg-base-200 rounded-lg flex flex-col gap-4">
         {editMode ? (
-          <>
-            <input
-              type="text"
-              name="title"
-              value={formValues.title}
-              onChange={handleInputChange}
-              className="input input-bordered"
-              placeholder="Title"
-            />
-            <input
-              type="text"
-              name="field"
-              value={formValues.field}
-              onChange={handleInputChange}
-              className="input input-bordered"
-              placeholder="Field"
-            />
-            <input
-              type="text"
-              name="department"
-              value={formValues.department}
-              onChange={handleInputChange}
-              className="input input-bordered"
-              placeholder="Department"
-            />
-            <input
-              type="text"
-              name="requirements"
-              value={formValues.requirements}
-              onChange={handleInputChange}
-              className="input input-bordered"
-              placeholder="Requirements (comma separated)"
-            />
-            <input
-              type="text"
-              name="foreignLanguages"
-              value={formValues.foreignLanguages}
-              onChange={handleInputChange}
-              className="input input-bordered"
-              placeholder="Foreign Languages (comma separated)"
-            />
-            <button className="btn btn-success" onClick={handleUpdate}>
-              Güncelle
-            </button>
-            <button className="btn btn-secondary" onClick={() => setEditMode(false)}>
-              İptal
-            </button>
-          </>
+          <div className="flex flex-col w-full min-w-[350px] justify-center items-center bg-base-200 pb-20 gap-2">
+            <div className="w-full max-w-md p-6 bg-base-100 rounded-lg h-fit">
+              <h1 className="text-2xl font-bold mb-6">Advert Information</h1>
+              <label className="label mb-2 text-neutral-content">Title:</label>
+              <input
+                type="text"
+                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                placeholder="Title"
+                required
+                name="title"
+                value={formValues.title}
+                onChange={handleInputChange}
+              />
+              <label className="label mb-2 text-neutral-content flex justify-start">
+                <span className="text-error">*</span>Field:
+              </label>
+              <input
+                type="text"
+                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                placeholder="Field"
+                required
+                name="field"
+                value={formValues.field}
+                onChange={handleInputChange}
+              />
+              <label className="label mb-2 text-neutral-content flex justify-start">
+                <span className="text-error">*</span>Requirements:
+              </label>
+              <textarea
+                className="textarea textarea-bordered textarea-primary textarea-md h-56 w-full bg-transparent text-neutral-content leading-tight p-4"
+                placeholder="Add requirements"
+                required
+                name="requirements"
+                value={formValues.requirements}
+                onChange={handleInputChange}
+              />
+              <label className="label mb-2 text-neutral-content flex justify-start">
+                <span className="text-error">*</span>Foreign Languages:
+              </label>
+              <textarea
+                className="textarea textarea-bordered textarea-primary textarea-md w-full bg-transparent text-neutral-content leading-tight p-4"
+                placeholder="Add foreign languages"
+                required
+                name="foreignLanguages"
+                value={formValues.foreignLanguages}
+                onChange={handleInputChange}
+              />
+              <label className="label mb-2 text-neutral-content">Department:</label>
+              <input
+                type="text"
+                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                placeholder="Department"
+                required
+                name="department"
+                value={formValues.department}
+                onChange={handleInputChange}
+              />
+              <div className="flex justify-between w-full mt-10">
+                <button
+                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+                  onClick={handleUpdate}>
+                  Güncelle
+                </button>
+                <button
+                  href="/show"
+                  onClick={() => setEditMode(false)}
+                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                  Geri
+                </button>
+              </div>
+            </div>
+          </div>
         ) : (
-          <>
+          <div className="w-full max-w-md p-6 bg-base-100 rounded-lg h-fit">
             <h1 className="text-2xl font-bold mb-4">{advert.title}</h1>
             <p>
               <strong>Field:</strong> {advert.field}
@@ -163,10 +187,10 @@ export default function AdvertDetail() {
               <strong>Department:</strong> {advert.department}
             </p>
             <p>
-              <strong>Requirements:</strong> {advert.requirements.join(", ")}
+              <strong>Requirements:</strong> {advert.requirements}
             </p>
             <p>
-              <strong>Foreign Languages:</strong> {advert.foreignLanguages.join(", ")}
+              <strong>Foreign Languages:</strong> {advert.foreignLanguages}
             </p>
             <p>
               <strong>Oluşturulma Tarihi:</strong> {new Date(advert.createdAt).toLocaleDateString("tr-TR")}
@@ -174,14 +198,20 @@ export default function AdvertDetail() {
             <p>
               <strong>Güncellenme Tarihi:</strong> {new Date(advert.updatedAt).toLocaleDateString("tr-TR")}
             </p>
-            <button className="btn btn-primary" onClick={() => setEditMode(true)}>
-              Düzenle
-            </button>
-          </>
+            <div className="flex justify-between mt-5 max-h-10">
+              <button
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+                onClick={() => setEditMode(true)}>
+                Düzenle
+              </button>
+              <button
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+                onClick={() => router.back()}>
+                Geri
+              </button>
+            </div>
+          </div>
         )}
-        <Link href="/show">
-          <button className="btn btn-primary mt-4">Geri</button>
-        </Link>
       </div>
     </section>
   );

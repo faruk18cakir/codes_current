@@ -12,6 +12,7 @@ export default function UserApplications() {
   const [applications, setApplications] = useState([]);
   const [modalContent, setModalContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [companyDetails, setCompanyDetails] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function UserApplications() {
     } else {
       fetchApplications();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, router, token]);
 
   const fetchApplications = async () => {
@@ -43,14 +45,39 @@ export default function UserApplications() {
     }
   };
 
-  const handleModalOpen = (application) => {
-    setModalContent(application);
+  const fetchAdvertDetail = async (advertId) => {
+    if (!token) return;
+    try {
+      const response = await fetch(`${apiUrl}/api/adverts/${advertId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data.advert;
+      } else {
+        console.error("Error fetching advert detail", await response.json());
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching advert detail", error);
+      return null;
+    }
+  };
+
+  const handleModalOpen = async (application) => {
+    const data = await fetchAdvertDetail(application.advert._id);
+    setModalContent(data);
     setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setModalContent(null);
+    setCompanyDetails(null);
   };
 
   if (isLoading || !isLoggedIn) {
@@ -67,6 +94,7 @@ export default function UserApplications() {
           <table className="table-auto w-full bg-base-200 rounded-lg">
             <thead>
               <tr>
+                <th className="px-4 py-2">Şirket İsmi</th>
                 <th className="px-4 py-2">İlanın İsmi</th>
                 <th className="px-4 py-2">Başvuru Durumu</th>
                 <th className="px-4 py-2">İncele</th>
@@ -75,10 +103,19 @@ export default function UserApplications() {
             <tbody>
               {applications.map((application) => (
                 <tr key={application._id} className="bg-base-100 border-b border-base-300 text-center">
+                  <td className="px-4 py-2 font-bold text-info">
+                    {application.advert ? application.advert.company?.companyName : "N/A"}
+                  </td>
                   <td className="px-4 py-2">{application.advert ? application.advert.title : "N/A"}</td>
-                  <td className="px-4 py-2">{application.status}</td>
+                  <td className="px-4 py-2 text-accent ">
+                    {application.status === "pending"
+                      ? "Değerlendirmede"
+                      : application.status === "accepted"
+                      ? "Onaylandı"
+                      : "Red oldu"}
+                  </td>
                   <td className="px-4 py-2">
-                    <button className="btn-info btn min-w-[100px]" onClick={() => handleModalOpen(application)}>
+                    <button className="btn btn-primary" onClick={() => handleModalOpen(application)}>
                       İncele
                     </button>
                   </td>
@@ -91,22 +128,29 @@ export default function UserApplications() {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-11/12 md:w-1/2">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">Başvuru Detayları</h2>
-              <button onClick={handleModalClose} className="text-red-500">
-                X
-              </button>
+          <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 md:w-1/2 relative">
+            <button
+              onClick={handleModalClose}
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 focus:outline-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="flex flex-col items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Başvuru Detayları</h2>
+              <div className="w-16 h-1 bg-primary rounded-full mb-4"></div>
             </div>
-            <div className="mt-4">
+            <div className="space-y-4 text-gray-700">
               <p>
-                <strong>Şirket İsmi:</strong> {modalContent.advert ? modalContent.advert.company : "N/A"}
+                <strong>Şirket İsmi:</strong> {modalContent ? modalContent.company?.companyName : "N/A"}
               </p>
               <p>
-                <strong>İlanın İsmi:</strong> {modalContent.advert ? modalContent.advert.title : "N/A"}
-              </p>
-              <p>
-                <strong>Başvuru Durumu:</strong> {modalContent.status}
+                <strong>İlanın İsmi:</strong> {modalContent ? modalContent.title : "N/A"}
               </p>
               <p>
                 <strong>Başvuru Tarihi:</strong> {new Date(modalContent.createdAt).toLocaleDateString()}
@@ -114,19 +158,26 @@ export default function UserApplications() {
               <p>
                 <strong>Son Güncelleme:</strong> {new Date(modalContent.updatedAt).toLocaleDateString()}
               </p>
-              {modalContent.advert && (
+              {modalContent.company && (
                 <>
                   <p>
-                    <strong>Requirements:</strong> {modalContent.advert.requirements.join(", ")}
+                    <strong>Requirements:</strong> {modalContent.requirements}
                   </p>
                   <p>
-                    <strong>Foreign Languages:</strong> {modalContent.advert.foreignLanguages.join(", ")}
+                    <strong>Foreign Languages:</strong> {modalContent.foreignLanguages}
                   </p>
                   <p>
-                    <strong>Department:</strong> {modalContent.advert.department}
+                    <strong>Department:</strong> {modalContent.department}
                   </p>
                 </>
               )}
+            </div>
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={handleModalClose}
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                Kapat
+              </button>
             </div>
           </div>
         </div>

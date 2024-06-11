@@ -15,6 +15,8 @@ export default function Apply() {
   useEffect(() => {
     if (token) {
       fetchAdverts();
+    } else {
+      router.push("/login");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -41,6 +43,22 @@ export default function Apply() {
     }
   };
 
+  const fetchApplications = async (advertId) => {
+    try {
+      const response = await fetch(`${apiUrl}/api/applications/advert/${advertId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+    return null;
+  };
+
   const handleViewAdvert = (id) => {
     router.push(`/advert/${id}`);
   };
@@ -49,21 +67,16 @@ export default function Apply() {
     router.push(`/advert/${id}/application`);
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
-    <div className="w-screen flex justify-center items-start h-screen py-20 bg-info">
+    <div className="w-screen flex justify-center items-start h-screen py-20 bg-base-100">
       <div className="overflow-x-auto">
         <h1 className="text-2xl font-bold mb-6">İlanları Görüntüle</h1>
         {isLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : adverts.length === 0 ? (
           <p>No adverts available.</p>
         ) : (
-          <table className="table table-zebra bg-primary">
-            {/* head */}
+          <table className="table table-zebra bg-base-200">
             <thead>
               <tr>
                 <th>#</th>
@@ -78,14 +91,34 @@ export default function Apply() {
                   <th>{index + 1}</th>
                   <td className="capitalize font-bold text-xl">{advert.title}</td>
                   <td>
-                    <button onClick={() => handleViewAdvert(advert._id)} className="btn btn-info">
+                    <button
+                      onClick={() => handleViewAdvert(advert._id)}
+                      className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
                       İlanı Görüntüle
                     </button>
                   </td>
                   <td>
-                    <button onClick={() => handleViewApplicants(advert._id)} className="btn btn-success">
-                      İlana Başvuranlar
-                    </button>
+                    {fetchApplications(advert._id).then((data) => {
+                      if (data) {
+                        return (
+                          data.applications.length > 0 && (
+                            <div className="indicator">
+                              {" "}
+                              <button
+                                onClick={() => handleViewApplicants(advert._id)}
+                                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                İlana Başvuranlar
+                              </button>
+                              {data.applications.filter((app) => app.status === "pending").length > 0 && (
+                                <span className="badge badge-sm bg-warning indicator-item">
+                                  {data.applications.filter((app) => app.status === "pending").length}
+                                </span>
+                              )}
+                            </div>
+                          )
+                        );
+                      }
+                    })}
                   </td>
                 </tr>
               ))}

@@ -30,6 +30,7 @@ export default function Profile() {
     email: "",
     firstName: "",
     lastName: "",
+    birthDate: "",
     phone: "",
     address: "",
     university: "",
@@ -49,53 +50,56 @@ export default function Profile() {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const router = useRouter();
 
-  if (!token) {
-    router.push("/");
-  }
-
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!token) return;
-      try {
-        const response = await fetch(`${apiUrl}/api/users/profile`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+    if (!isLoggedIn) {
+      router.push("/login");
+    } else {
+      fetchProfile();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, router, token]);
+
+  const fetchProfile = async () => {
+    if (!token) return;
+    try {
+      const response = await fetch(`${apiUrl}/api/users/profile`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setFormData({
+          username: data.user?.username || "",
+          email: data.user?.email || "",
+          firstName: data.profile?.firstName || "",
+          lastName: data.profile?.lastName || "",
+          birthDate: data.profile?.birthDate || "",
+          phone: data.profile?.phoneNumber || "",
+          address: data.profile?.address || "",
+          university: data.profile?.university || "",
+          department: data.profile?.department || "",
+          class: data.profile?.class || "",
+          gpa: data.profile?.average ? data.profile.average.toString() : "",
+          experience: data.profile?.workExperience || "",
+          desiredField: data.profile?.desiredField || "",
+          skills: data.profile?.skills || [],
+          foreignLanguages: data.profile?.languages || [],
+          teamwork: data.profile?.teamWorkSkill || "",
+          communicationSkills: data.profile?.communicationSkill || "",
+          analyticalSkills: data.profile?.analyticalSkill || "",
+          hobbies: data.profile?.hobbies || [],
         });
-        if (response.ok) {
-          const data = await response.json();
-          setFormData({
-            username: data.user?.username || "",
-            email: data.user?.email || "",
-            firstName: data.user?.firstName || "",
-            lastName: data.user?.lastName || "",
-            phone: data.user?.phoneNumber || "",
-            address: data.user?.address || "",
-            university: data.user?.university || "",
-            department: data.user?.department || "",
-            class: data.user?.class || "",
-            gpa: data.user?.average ? data.user.average.toString() : "",
-            experience: data.user?.workExperience ? data.user.workExperience.join(", ") : "",
-            desiredField: data.user?.desiredField || "",
-            skills: data.user?.skills || [],
-            foreignLanguages: data.user?.languages ? data.user.languages.join(", ") : "",
-            teamwork: data.user?.teamWorkSkill ? data.user.teamWorkSkill.join(", ") : "",
-            communicationSkills: data.user?.communicationSkill ? data.user.communicationSkill.join(", ") : "",
-            analyticalSkills: data.user?.analyticalSkill ? data.user.analyticalSkill.join(", ") : "",
-            hobbies: data.user?.hobbies || [],
-          });
-        } else {
-          const data = await response.json();
-          console.log("Error fetching profile", data);
-        }
-      } catch (error) {
-        console.log("Error fetching profile", error);
+      } else {
+        const data = await response.json();
+        console.log("Error fetching profile", data);
       }
-    };
-    fetchProfile();
-  }, [token]);
+    } catch (error) {
+      console.log("Error fetching profile", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -123,11 +127,10 @@ export default function Profile() {
       setNewSkill(""); // Reset input
       setSelectedSkillLevel(""); // Reset level
     } else {
-
-            setToastMessage("Lütfen beceri ve seviye girin.");
-            setTimeout(() => {
-              setToastMessage("");
-            }, 3000);
+      setToastMessage("Lütfen beceri ve seviye girin.");
+      setTimeout(() => {
+        setToastMessage("");
+      }, 3000);
     }
   };
 
@@ -146,22 +149,19 @@ export default function Profile() {
       firstName: formData.firstName,
       lastName: formData.lastName,
       phoneNumber: formData.phone,
+      birthDate: formData.birthDate.toString(),
       address: formData.address,
       university: formData.university,
       department: formData.department,
       class: formData.class,
       average: parseFloat(formData.gpa), // assuming GPA is a string, converting to float
-      workExperience: formData.experience ? formData.experience.split(",").map((exp) => exp.trim()) : [],
+      workExperience: formData.experience,
       desiredField: formData.desiredField,
       skills: formData.skills,
-      languages: formData.foreignLanguages ? formData.foreignLanguages.split(",").map((lang) => lang.trim()) : [],
-      teamWorkSkill: formData.teamwork ? formData.teamwork.split(",").map((skill) => skill.trim()) : [],
-      communicationSkill: formData.communicationSkills
-        ? formData.communicationSkills.split(",").map((skill) => skill.trim())
-        : [],
-      analyticalSkill: formData.analyticalSkills
-        ? formData.analyticalSkills.split(",").map((skill) => skill.trim())
-        : [],
+      languages: formData.foreignLanguages,
+      teamWorkSkill: formData.teamwork,
+      communicationSkill: formData.communicationSkills,
+      analyticalSkill: formData.analyticalSkills,
       hobbies: formData.hobbies,
     };
 
@@ -178,13 +178,23 @@ export default function Profile() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("Profile updated successfully", data);
+
+        setToastMessage("Profile updated successfully.");
+        setTimeout(() => {
+          setToastMessage("");
+        }, 3000);
       } else {
-        const data = await response.json();
         console.log("Error updating profile", data);
+        setToastMessage("Error updating profile.");
+        setTimeout(() => {
+          setToastMessage("");
+        }, 3000);
       }
     } catch (error) {
-      console.log("Error updating profile", error);
+      setToastMessage("Error updating profile.");
+      setTimeout(() => {
+        setToastMessage("");
+      }, 3000);
     }
   };
 
@@ -266,7 +276,7 @@ export default function Profile() {
             <input
               type="text"
               className="input input-bordered ml-2 input-primary input-sm w-1/2 bg-transparent text-neutral-content"
-              placeholder="Adınız"
+              placeholder={formData.firstName || "Ad"}
               required
               name="firstName"
               onChange={handleChange}
@@ -278,7 +288,7 @@ export default function Profile() {
             <input
               type="text"
               className="input input-bordered  input-primary input-sm w-1/2 bg-transparent text-neutral-content"
-              placeholder="Soyad"
+              placeholder={formData.lastName || "Soyad"}
               required
               name="lastName"
               onChange={handleChange}
@@ -293,7 +303,7 @@ export default function Profile() {
               placeholder="aa/gg/yyyy"
               name="birthday"
               onChange={handleChange}
-              value={formData.birthday}
+              value={formData.birthDate}
             />
           </label>
           <label className="label text-neutral-content">
@@ -461,7 +471,6 @@ export default function Profile() {
               <div className="flex gap-2 w-fit justify-end">
                 <select
                   className="select select-bordered select-primary select-sm w-1/2 bg-transparent text-neutral-content"
-                  required
                   name="foreignLanguages"
                   onChange={handleLanguageChange}
                   value={selectedLanguage}>

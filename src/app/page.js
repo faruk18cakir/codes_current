@@ -63,14 +63,17 @@ export default function Home() {
           <div key={item.title} className="card shadow-xl w-full bg-primary h-fit">
             <div className="card-body ">
               <h2 className="card-title text-accent-content">{item.title}</h2>
-              <span className="font-bold flex justify-between items-end">{item.field}<i className="font-normal text-xs pl-2 text-primary-content" >{item.department}</i></span>
-              
-              {item.requirements.length > 0 && (
+              <span className="font-bold flex justify-between items-end">
+                {item.field}
+                <i className="font-normal text-xs pl-2 text-primary-content">{item.department}</i>
+              </span>
+
+              {item.requirements && (
                 <button onClick={() => handleModal("Info Requirements", item.requirements)} className="btn btn-info ">
                   Info Requirements
                 </button>
               )}
-              {item.foreignLanguages.length > 0 && (
+              {item.foreignLanguages && (
                 <button
                   onClick={() => handleModal("Foreign Languages", item.foreignLanguages)}
                   className="btn btn-info ">
