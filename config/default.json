@@ -1,0 +1,13 @@
+{
+  "applicationPort": 3000,
+  "jwtSettings": {
+    "privateKey": "(G+KbPeShVmYp3s6v9y$B&E)H@McQfTjY",
+    "issuer": "Sina Sadigh",
+    "expirationInMinutes": 180
+  },
+  "db": "mongodb+srv://omerfaruk:12345@stajyonetim.0lqminl.mongodb.net/",
+  "dbOptions": {
+    "autoIndex": true,
+    "socketTimeoutMS": 30000
+  }
+}
