@@ -144,12 +144,6 @@ router.put("/:id", authenticateUser, async (req, res) => {
         .status(404)
         .send({ response: false, error: "Advert not found." });
     }
-    if (advert.company.toString() !== user.company.toString()) {
-      return res.status(403).send({
-        response: false,
-        error: "You are unauthorized to edit this advert.",
-      });
-    }
     const { id } = req.params;
     const {
       title,

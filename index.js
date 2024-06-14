@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./src/routes/user.js");
 const advertRouter = require("./src/routes/advert");
 const applicationRouter = require("./src/routes/application");
+const reviewRouter = require("./src/routes/review");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -36,3 +37,4 @@ app.use(bodyParser.json());
 app.use("/api/users", userRoutes);
 app.use("/api/adverts", advertRouter);
 app.use("/api/applications", applicationRouter);
+app.use("/api/reviews", reviewRouter);

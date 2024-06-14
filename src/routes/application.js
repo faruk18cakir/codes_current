@@ -101,7 +101,7 @@ router.patch("/accept/:id", authenticateUser, async (req, res) => {
 
     const advert = await Advert.findById(application.advert._id);
 
-    if (advert.company.toString() !== user.company.toString()) {
+    if (advert.company?._id.toString() !== user.company.toString()) {
       return res.status(403).send({ response: false, error: "Unauthorized to accept this application." });
     }
 
@@ -110,6 +110,38 @@ router.patch("/accept/:id", authenticateUser, async (req, res) => {
     await application.save();
 
     res.status(200).send({ response: true, message: "Application successfully accepted.", application });
+  } catch (error) {
+    console.error("Error accepting application:", error);
+    res.status(500).send({ response: false, error: "An error occurred while accepting the application." });
+  }
+});
+
+router.patch("/reject/:id", authenticateUser, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+
+    if (user.role !== "company") {
+      return res.status(403).send({ response: false, error: "Only companies can accept applications." });
+    }
+
+    const application = await Application.findById(id).populate("advert");
+
+    if (!application) {
+      return res.status(404).send({ response: false, error: "Application not found." });
+    }
+
+    const advert = await Advert.findById(application.advert._id);
+
+    if (advert.company._id.toString() !== user.company.toString()) {
+      return res.status(403).send({ response: false, error: "Unauthorized to accept this application." });
+    }
+
+    application.status = "rejected";
+
+    await application.save();
+
+    res.status(200).send({ response: true, message: "Application successfully rejected.", application });
   } catch (error) {
     console.error("Error accepting application:", error);
     res.status(500).send({ response: false, error: "An error occurred while accepting the application." });
