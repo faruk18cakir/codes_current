@@ -102,60 +102,60 @@ export default function AdvertDetail() {
   }
 
   return (
-    <section className="w-screen flex justify-center items-start py-20 bg-base-100">
-      <div className=" p-6 bg-base-200 rounded-lg flex flex-col gap-4">
+    <section className="w-screen flex justify-center items-start mt-72 sm:mt-20 bg-base-100">
+      <div className="bg-base-200 rounded-lg flex flex-col gap-4">
         {editMode ? (
-          <div className="flex flex-col w-full min-w-[350px] justify-center items-center bg-base-200 pb-20 gap-2">
+          <div className="flex flex-col w-screen max-w-[550px] justify-center items-center bg-base-200 pb-2 gap-2">
             <div className="w-full max-w-md p-6 bg-base-100 rounded-lg h-fit">
               <h1 className="text-2xl font-bold mb-6">Advert Information</h1>
-              <label className="label mb-2 text-neutral-content">Title:</label>
+              <label className="label mb-2 ">Title:</label>
               <input
                 type="text"
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Title"
                 required
                 name="title"
                 value={formValues.title}
                 onChange={handleInputChange}
               />
-              <label className="label mb-2 text-neutral-content flex justify-start">
+              <label className="label mb-2  flex justify-start">
                 <span className="text-error">*</span>Field:
               </label>
               <input
                 type="text"
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Field"
                 required
                 name="field"
                 value={formValues.field}
                 onChange={handleInputChange}
               />
-              <label className="label mb-2 text-neutral-content flex justify-start">
+              <label className="label mb-2  flex justify-start">
                 <span className="text-error">*</span>Requirements:
               </label>
               <textarea
-                className="textarea textarea-bordered textarea-primary textarea-md h-56 w-full bg-transparent text-neutral-content leading-tight p-4"
+                className="textarea textarea-bordered textarea-primary textarea-md h-56 w-full bg-transparent  leading-tight p-4"
                 placeholder="Add requirements"
                 required
                 name="requirements"
                 value={formValues.requirements}
                 onChange={handleInputChange}
               />
-              <label className="label mb-2 text-neutral-content flex justify-start">
+              <label className="label mb-2  flex justify-start">
                 <span className="text-error">*</span>Foreign Languages:
               </label>
               <textarea
-                className="textarea textarea-bordered textarea-primary textarea-md w-full bg-transparent text-neutral-content leading-tight p-4"
+                className="textarea textarea-bordered textarea-primary textarea-md w-full bg-transparent  leading-tight p-4"
                 placeholder="Add foreign languages"
                 required
                 name="foreignLanguages"
                 value={formValues.foreignLanguages}
                 onChange={handleInputChange}
               />
-              <label className="label mb-2 text-neutral-content">Department:</label>
+              <label className="label mb-2 ">Department:</label>
               <input
                 type="text"
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Department"
                 required
                 name="department"

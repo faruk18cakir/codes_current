@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import moment from "moment";
 import { HiPlus } from "react-icons/hi";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 import { HiX } from "react-icons/hi";
@@ -51,13 +52,9 @@ export default function Profile() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.push("/login");
-    } else {
-      fetchProfile();
-    }
+    fetchProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, router, token]);
+  }, [isLoggedIn]);
 
   const fetchProfile = async () => {
     if (!token) return;
@@ -101,14 +98,6 @@ export default function Profile() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
   const handleSkillChange = (e) => {
     setNewSkill(e.target.value);
   };
@@ -149,7 +138,7 @@ export default function Profile() {
       firstName: formData.firstName,
       lastName: formData.lastName,
       phoneNumber: formData.phone,
-      birthDate: formData.birthDate.toString(),
+      birthDate: formData.birthDate,
       address: formData.address,
       university: formData.university,
       department: formData.department,
@@ -164,8 +153,6 @@ export default function Profile() {
       analyticalSkill: formData.analyticalSkills,
       hobbies: formData.hobbies,
     };
-
-    console.log(payload);
 
     try {
       const response = await fetch(`${apiUrl}/api/users/intern-profile`, {
@@ -258,24 +245,32 @@ export default function Profile() {
     return <Loading />;
   }
 
+  const handleChange = (e, field) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+  };
+
   return (
-    <section className="w-screen flex justify-center items-start h-screen py-20 bg-base-100">
+    <section className="w-screen flex justify-center items-start  mt-72 sm:mt-20  bg-base-100">
       <form
-        className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 md:flex-row md:items-start md:space-x-6 pb-20 gap-2"
+        className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 md:flex-row md:items-start md:space-x-6 gap-2"
         onSubmit={handleSubmit}>
         <div className="w-full max-w-md p-6 bg-base-200 md:w-1/2 rounded-lg h-fit">
           <h1 className="text-2xl font-bold mb-6">Profil Bilgileri</h1>
-          <label className="label text-neutral-content">
+          <label className="label ">
             Kullanıcı Adı : <strong>{formData.username}</strong>
           </label>
-          <label className="label text-neutral-content">
+          <label className="label ">
             E-posta : <strong>{formData.email}</strong>
           </label>
           <label className="label flex justify-between text-error">
             Adınız:
             <input
               type="text"
-              className="input input-bordered ml-2 input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+              className="input input-bordered ml-2 input-primary input-sm w-1/2 bg-transparent "
               placeholder={formData.firstName || "Ad"}
               required
               name="firstName"
@@ -287,7 +282,7 @@ export default function Profile() {
             Soyad:
             <input
               type="text"
-              className="input input-bordered  input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+              className="input input-bordered  input-primary input-sm w-1/2 bg-transparent "
               placeholder={formData.lastName || "Soyad"}
               required
               name="lastName"
@@ -295,33 +290,33 @@ export default function Profile() {
               value={formData.lastName}
             />
           </label>
-          <label className="label  text-neutral-content">
+          <label className="label  ">
             Doğum Tarihi:
             <input
               type="date"
-              className="input input-bordered input-primary input-sm w-1/2  bg-transparent text-neutral-content"
-              placeholder="aa/gg/yyyy"
+              className="input input-bordered input-primary input-sm w-1/2 bg-transparent"
+              placeholder="mm/dd/yyyy"
               name="birthday"
-              onChange={handleChange}
-              value={formData.birthDate}
+              onChange={(e) => handleChange(e, "birthDate")}
+              value={formData.birthDate ? formData.birthDate : ""}
             />
           </label>
-          <label className="label text-neutral-content">
+          <label className="label ">
             Telefon:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2  bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="Telefon"
               name="phone"
               onChange={handleChange}
               value={formData.phone}
             />
           </label>
-          <label className="label text-neutral-content">
+          <label className="label ">
             Adres:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2  bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="Adres"
               name="address"
               onChange={handleChange}
@@ -332,7 +327,7 @@ export default function Profile() {
             Üniversite:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2 bg-transparent "
               placeholder="Üniversite"
               required
               name="university"
@@ -344,7 +339,7 @@ export default function Profile() {
             Bölüm:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2 bg-transparent "
               placeholder="Bölüm"
               required
               name="department"
@@ -358,7 +353,7 @@ export default function Profile() {
             Sınıf:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2  bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="Sınıf"
               required
               name="class"
@@ -371,7 +366,7 @@ export default function Profile() {
             GPA:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2  bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="GPA"
               required
               name="gpa"
@@ -380,11 +375,11 @@ export default function Profile() {
             />
           </label>
 
-          <label className="label text-neutral-content">
+          <label className="label ">
             Deneyim:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2 bg-transparent "
               placeholder="Deneyim"
               name="experience"
               onChange={handleChange}
@@ -396,7 +391,7 @@ export default function Profile() {
             İstenilen Alan:
             <input
               type="text"
-              className="input input-bordered input-primary input-sm w-1/2  bg-transparent text-neutral-content"
+              className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="İstenilen Alan"
               required
               name="desiredField"
@@ -411,7 +406,7 @@ export default function Profile() {
               <div className="flex gap-2 w-full justify-end ">
                 <input
                   type="text"
-                  className="input input-bordered input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+                  className="input input-bordered input-primary input-sm w-1/2 bg-transparent "
                   placeholder="Yetenek"
                   name="skills"
                   onChange={handleSkillChange}
@@ -420,7 +415,7 @@ export default function Profile() {
                 {newSkill && (
                   <>
                     <select
-                      className="select select-bordered select-primary select-sm w-1/4 bg-transparent text-neutral-content"
+                      className="select select-bordered select-primary select-sm w-1/4 bg-transparent "
                       required
                       name="skillLevel"
                       onChange={handleSkillLevelChange}
@@ -470,7 +465,7 @@ export default function Profile() {
               Yabancı Dil:
               <div className="flex gap-2 w-fit justify-end">
                 <select
-                  className="select select-bordered select-primary select-sm w-1/2 bg-transparent text-neutral-content"
+                  className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
                   name="foreignLanguages"
                   onChange={handleLanguageChange}
                   value={selectedLanguage}>
@@ -486,7 +481,7 @@ export default function Profile() {
                 {selectedLanguage && (
                   <>
                     <select
-                      className="select select-bordered select-primary select-sm w-1/3 bg-transparent text-neutral-content"
+                      className="select select-bordered select-primary select-sm w-1/3 bg-transparent "
                       required
                       name="languageLevel"
                       onChange={handleLevelChange}
@@ -534,7 +529,7 @@ export default function Profile() {
           <label className="label flex justify-between text-error">
             Teamwork Skills:
             <select
-              className="select select-bordered select-primary select-sm w-1/2 bg-transparent text-neutral-content"
+              className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
               required
               name="teamwork"
               onChange={handleChange}
@@ -551,7 +546,7 @@ export default function Profile() {
           <label className="label flex justify-between text-error">
             Communication Skills:
             <select
-              className="select select-bordered select-primary select-sm w-1/2 bg-transparent text-neutral-content"
+              className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
               required
               name="communicationSkills"
               onChange={handleChange}
@@ -568,7 +563,7 @@ export default function Profile() {
           <label className="label flex justify-between text-error">
             Analytical Skills:
             <select
-              className="select select-bordered select-primary select-sm w-1/2 bg-transparent text-neutral-content"
+              className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
               required
               name="analyticalSkills"
               onChange={handleChange}
@@ -588,7 +583,7 @@ export default function Profile() {
               <div className="flex gap-2 mb-2 justify-end">
                 <input
                   type="text"
-                  className="input input-bordered input-primary input-sm w-1/2 bg-transparent text-neutral-content"
+                  className="input input-bordered input-primary input-sm w-1/2 bg-transparent "
                   placeholder="Hobbies"
                   name="newHobby"
                   onChange={handleHobbiesChange}

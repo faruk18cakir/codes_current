@@ -41,7 +41,7 @@ export default function LoginCompany() {
   const onSubmitTest = async (e) => {
     localStorage.setItem("token", "test");
     router.replace("/");
-     router.refresh("/");
+    router.refresh("/");
   };
 
   return (
@@ -52,23 +52,23 @@ export default function LoginCompany() {
           <p className="text-base-content text-center mb-4">Inanılmaz bir deneyim yaşamak için lütfen giriş yap.</p>
           <form onSubmit={handleSubmit}>
             <div className="form-control">
-              <label className="label mb-2 text-neutral-content">Kullanıcı Adı</label>
+              <label className="label mb-2 ">Kullanıcı Adı</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Kullanıcı Adı"
                 required
               />
             </div>
             <div className="form-control mt-2">
-              <label className="label mb-2 text-neutral-content">Şifre</label>
+              <label className="label mb-2 ">Şifre</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Şifre"
                 required
               />

@@ -7,7 +7,7 @@ const Footer = () => {
   }
 
   return (
-    <footer className="footer items-center p-4 bg-secondary  fixed bottom-0">
+    <footer className="footer items-center p-4 bg-secondary">
       <aside className="items-center grid-flow-col">
         <svg
           width="36"

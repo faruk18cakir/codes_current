@@ -6,12 +6,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   letter-spacing: -0.01em;
-  width: 100vw;
   overflow-x: hidden;
-  height: 100vh;
 }

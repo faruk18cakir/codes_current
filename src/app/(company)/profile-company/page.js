@@ -122,79 +122,79 @@ export default function Profile() {
   }
 
   return (
-    <section className="w-screen flex justify-center items-start h-screen py-20 bg-base-100">
+    <section className="w-screen flex justify-center items-start  mt-72 sm:mt-20  bg-base-100">
       <form
-        className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 md:flex-row md:items-start md:space-x-6 pb-20 gap-2"
+        className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 md:flex-row md:items-start md:space-x-6 pb-2 gap-2"
         onSubmit={handleSubmit}>
         <div className="w-full max-w-md p-6 bg-base-200 md:w-1/2 rounded-lg h-fit">
           <h1 className="text-2xl font-bold mb-6">Profile Information</h1>
-          <label className="label mb-2 text-neutral-content">Username:</label>
+          <label className="label mb-2 ">Username:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Username"
             disabled
             name="username"
             value={formData.username}
           />
-          <label className="label mb-2 text-neutral-content">Email:</label>
+          <label className="label mb-2 ">Email:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Email"
             disabled
             name="email"
             value={formData.email}
           />
-          <label className="label mb-2 text-neutral-content">Company Name:</label>
+          <label className="label mb-2 ">Company Name:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Company Name"
             required
             name="companyName"
             onChange={handleChange}
             value={formData.companyName}
           />
-          <label className="label mb-2 text-neutral-content">Address:</label>
+          <label className="label mb-2 ">Address:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Address"
             name="address"
             onChange={handleChange}
             value={formData.address}
           />
-          <label className="label mb-2 text-neutral-content">Sector:</label>
+          <label className="label mb-2 ">Sector:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Sector"
             name="sector"
             onChange={handleChange}
             value={formData.sector}
           />
-          <label className="label mb-2 text-neutral-content">Phone:</label>
+          <label className="label mb-2 ">Phone:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Phone"
             name="phoneNumber"
             onChange={handleChange}
             value={formData.phoneNumber}
           />
-          <label className="label mb-2 text-neutral-content">Fax:</label>
+          <label className="label mb-2 ">Fax:</label>
           <input
             type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+            className="input input-bordered input-primary input-sm w-full bg-transparent "
             placeholder="Fax"
             name="faxNumber"
             onChange={handleChange}
             value={formData.faxNumber}
           />
-          <label className="label mb-2 text-neutral-content">About:</label>
+          <label className="label mb-2 ">About:</label>
           <textarea
-            className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent text-neutral-content"
+            className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent "
             placeholder="About"
             name="about"
             onChange={handleChange}

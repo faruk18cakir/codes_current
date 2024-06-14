@@ -12,17 +12,12 @@ export default function UserApplications() {
   const [applications, setApplications] = useState([]);
   const [modalContent, setModalContent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [companyDetails, setCompanyDetails] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.push("/login");
-    } else {
-      fetchApplications();
-    }
+    fetchApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, router, token]);
+  }, [isLoggedIn]);
 
   const fetchApplications = async () => {
     if (!token) return;
@@ -77,7 +72,6 @@ export default function UserApplications() {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setModalContent(null);
-    setCompanyDetails(null);
   };
 
   if (isLoading || !isLoggedIn) {
@@ -85,50 +79,66 @@ export default function UserApplications() {
   }
 
   return (
-    <section className="w-screen flex justify-center py-20 bg-base-100 h-full">
-      <div className="w-screen max-w-[1200px] px-10">
-        <h1 className="text-2xl font-bold mb-4">Başvurularım</h1>
+    <section className="w-screen flex justify-center pb-5 mt-72 sm:mt-20 bg-base-100">
+      <div className="w-screen max-w-[1200px] px-1 sm:px-10">
+        <h1 className="text-2xl font-bold mb-4">Staj Başvurularım</h1>
         {applications.length === 0 ? (
-          <div className="text-center text-3xl text-gray-500 mt-20">Henüz başvuru yapılmadı!!!</div>
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-center text-3xl text-gray-500 mt-10">Bir aktif staj başvurusu bulunamadı!!!</div>
+            <p className="text-center text-red-500 mt-4">Önemli: Başvuru yapmadan önce profilinizi oluşturun</p>
+          </div>
         ) : (
-          <table className="table-auto w-full bg-base-200 rounded-lg">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Şirket İsmi</th>
-                <th className="px-4 py-2">İlanın İsmi</th>
-                <th className="px-4 py-2">Başvuru Durumu</th>
-                <th className="px-4 py-2">İncele</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((application) => (
-                <tr key={application._id} className="bg-base-100 border-b border-base-300 text-center">
-                  <td className="px-4 py-2 font-bold text-info">
-                    {application.advert ? application.advert.company?.companyName : "N/A"}
-                  </td>
-                  <td className="px-4 py-2">{application.advert ? application.advert.title : "N/A"}</td>
-                  <td className="px-4 py-2 text-accent ">
-                    {application.status === "pending"
-                      ? "Değerlendirmede"
-                      : application.status === "accepted"
-                      ? "Onaylandı"
-                      : "Red oldu"}
-                  </td>
-                  <td className="px-4 py-2">
-                    <button className="btn btn-primary" onClick={() => handleModalOpen(application)}>
-                      İncele
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full bg-base-200 rounded-lg">
+              <thead>
+                <tr className="bg-base-300 text-left">
+                  <th className="px-4 py-2">#</th>
+                  <th className="px-4 py-2">Şirket İsmi</th>
+                  <th className="px-4 py-2">İlanın İsmi</th>
+                  <th className="px-4 py-2">Başvuru Durumu</th>
+                  <th className="px-4 py-2">İncele</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {applications.map((application, index) => (
+                  <tr key={application._id} className="bg-base-100 border-b border-base-300 text-left">
+                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2 font-bold text-primary">
+                      {application.advert ? application.advert.company?.companyName : "N/A"}
+                    </td>
+                    <td className="px-4 py-2">{application.advert ? application.advert.title : "N/A"}</td>
+                    <td
+                      className={`px-4 py-2 ${
+                        application.status === "pending"
+                          ? "text-gray-500"
+                          : application.status === "accepted"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}>
+                      {application.status === "pending"
+                        ? "Değerlendirmede"
+                        : application.status === "accepted"
+                        ? "Onaylandı"
+                        : "Red oldu"}
+                    </td>
+                    <td className="px-4 py-2 h-2">
+                      <button
+                        className="px-4 py-1 rounded-md bg-primary text-primary-content"
+                        onClick={() => handleModalOpen(application)}>
+                        İncele
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 md:w-1/2 relative">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 md:w-1/2 relative max-h-screen overflow-y-auto">
             <button
               onClick={handleModalClose}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 focus:outline-none">

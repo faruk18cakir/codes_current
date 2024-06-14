@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Toast from "../../../components/toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import Image from "next/image";
+import bgImage from "../../../assets/image/bg.jpg";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("intern");
@@ -49,38 +50,39 @@ export default function Register() {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center bg-neutral-focus">
-      <div className="card shadow-xl w-96 bg-base-100">
+    <div className="w-screen h-screen flex flex-col justify-center items-center bg-neutral-focus relative">
+      <Image src={bgImage} alt="bg" className="w-full h-full object-cover absolute top-0 left-0 " />
+      <div className="card shadow-xl w-full sm:w-96 bg-base-100">
         <div className="card-body p-6">
           <h1 className="text-3xl text-center font-bold mb-2">Kayıt Ol</h1>
           <form onSubmit={handleSubmit}>
             <div className="form-control">
-              <label className="label mb-2 text-neutral-content">Kullanıcı Adınız*</label>
+              <label className="label mb-2 ">Kullanıcı Adınız*</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Kullanıcı Adınız"
                 required
               />
             </div>
             <div className="form-control mt-2">
-              <label className="label mb-2 text-neutral-content">E-posta Adresiniz*</label>
+              <label className="label mb-2 ">E-posta Adresiniz*</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="E-posta Adresiniz"
                 required
               />
             </div>
             <div className="form-control mt-2">
-              <label className="label mb-2 text-neutral-content">Kullanıcı Türü Seçiniz*</label>
+              <label className="label mb-2 ">Kullanıcı Türü Seçiniz*</label>
               <select
                 onChange={(e) => setRole(e.target.value)}
-                className="select select-bordered select-primary select-sm w-full bg-transparent text-neutral-content"
+                className="select select-bordered select-primary select-sm w-full bg-transparent "
                 required>
                 <option value="" disabled>
                   Lütfen Seçiniz
@@ -90,12 +92,12 @@ export default function Register() {
               </select>
             </div>
             <div className="form-control mt-2">
-              <label className="label mb-2 text-neutral-content">Şifrenizi Giriniz*</label>
+              <label className="label mb-2 ">Şifrenizi Giriniz*</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
+                className="input input-bordered input-primary input-sm w-full bg-transparent "
                 placeholder="Şifrenizi Giriniz"
                 required
               />

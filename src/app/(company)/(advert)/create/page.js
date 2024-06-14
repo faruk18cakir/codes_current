@@ -19,6 +19,17 @@ export default function Advert() {
     department: "",
   });
 
+  const [formProfileData, setFormProfileData] = useState({
+    username: "",
+    email: "",
+    companyName: "",
+    address: "",
+    sector: "",
+    phoneNumber: "",
+    faxNumber: "",
+    about: "",
+  });
+
   const [toastMessage, setToastMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +39,10 @@ export default function Advert() {
   useEffect(() => {
     if (!token) {
       router.push("/");
+    } else {
+      getCompanyProfile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, router]);
 
   const handleChange = (e) => {
@@ -53,6 +67,36 @@ export default function Advert() {
       ...prevState,
       foreignLanguages,
     }));
+  };
+
+  const getCompanyProfile = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/users/profile`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setFormProfileData({
+          username: data.user?.username || "",
+          email: data.user?.email || "",
+          companyName: data.profile?.companyName || "",
+          address: data.profile?.address || "",
+          sector: data.profile?.sector || "",
+          phoneNumber: data.profile?.phoneNumber || "",
+          faxNumber: data.profile?.faxNumber || "",
+          about: data.profile?.about || "",
+        });
+      } else {
+        const data = await response.json();
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -110,71 +154,78 @@ export default function Advert() {
   }
 
   return (
-    <section className="w-screen flex justify-center items-start h-screen py-20 bg-base-100">
-      <form
-        className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 pb-20 gap-2"
-        onSubmit={handleSubmit}>
-        <div className="w-full max-w-md p-6 bg-base-200 rounded-lg h-fit">
-          <h1 className="text-2xl font-bold mb-6">Advert Information</h1>
-          <label className="label mb-2 text-neutral-content">Title:</label>
-          <input
-            type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
-            placeholder="Title"
-            required
-            name="title"
-            onChange={handleChange}
-            value={formData.title}
-          />
-          <label className="label mb-2 text-neutral-content flex justify-start">
-            <span className="text-error">*</span>Field:
-          </label>
-          <input
-            type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
-            placeholder="Field"
-            required
-            name="field"
-            onChange={handleChange}
-            value={formData.field}
-          />
-          <label className="label mb-2 text-neutral-content flex justify-start">
-            <span className="text-error">*</span>Requirements:
-          </label>
-          <textarea
-            className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent text-neutral-content leading-tight p-4"
-            placeholder="Add requirements"
-            required
-            name="requirements"
-            onChange={handleRequirementsChange}
-            value={formData.requirements}
-          />
-          <label className="label mb-2 text-neutral-content flex justify-start">
-            <span className="text-error">*</span>Foreign Languages:
-          </label>
-          <textarea
-            className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent text-neutral-content leading-tight p-4"
-            placeholder="Add foreign languages"
-            required
-            name="foreignLanguages"
-            onChange={handleForeignLanguagesChange}
-            value={formData.foreignLanguages}
-          />
-          <label className="label mb-2 text-neutral-content">Department:</label>
-          <input
-            type="text"
-            className="input input-bordered input-primary input-sm w-full bg-transparent text-neutral-content"
-            placeholder="Department"
-            required
-            name="department"
-            onChange={handleChange}
-            value={formData.department}
-          />
-          <button type="submit" className="btn btn-primary mt-4 w-full" disabled={isLoading}>
-            {loading ? <span className="loading loading-ring loading-sm"></span> : "Create"}
-          </button>
+    <section className="w-screen flex justify-center items-start mt-72 sm:mt-20  bg-base-100">
+      {formProfileData.companyName==="" || formProfileData.companyName===null ? (
+        <div className="flex flex-col items-center justify-center">
+          <div className="text-center text-3xl text-gray-500 mt-10">Profilinizi oluşturun.!!!</div>
+          <p className="text-center text-red-500 mt-4"> Önemly : İlan vermeden önce profilinizi oluşturun</p>
         </div>
-      </form>
+      ) : (
+        <form
+          className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 pb-2 gap-2"
+          onSubmit={handleSubmit}>
+          <div className="w-full max-w-md p-6 bg-base-200 rounded-lg h-fit">
+            <h1 className="text-2xl font-bold mb-6">Advert Information</h1>
+            <label className="label mb-2 ">Title:</label>
+            <input
+              type="text"
+              className="input input-bordered input-primary input-sm w-full bg-transparent "
+              placeholder="Title"
+              required
+              name="title"
+              onChange={handleChange}
+              value={formData.title}
+            />
+            <label className="label mb-2  flex justify-start">
+              <span className="text-error">*</span>Field:
+            </label>
+            <input
+              type="text"
+              className="input input-bordered input-primary input-sm w-full bg-transparent "
+              placeholder="Field"
+              required
+              name="field"
+              onChange={handleChange}
+              value={formData.field}
+            />
+            <label className="label mb-2  flex justify-start">
+              <span className="text-error">*</span>Requirements:
+            </label>
+            <textarea
+              className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent  leading-tight p-4"
+              placeholder="Add requirements"
+              required
+              name="requirements"
+              onChange={handleRequirementsChange}
+              value={formData.requirements}
+            />
+            <label className="label mb-2  flex justify-start">
+              <span className="text-error">*</span>Foreign Languages:
+            </label>
+            <textarea
+              className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent  leading-tight p-4"
+              placeholder="Add foreign languages"
+              required
+              name="foreignLanguages"
+              onChange={handleForeignLanguagesChange}
+              value={formData.foreignLanguages}
+            />
+            <label className="label mb-2 ">Department:</label>
+            <input
+              type="text"
+              className="input input-bordered input-primary input-sm w-full bg-transparent "
+              placeholder="Department"
+              required
+              name="department"
+              onChange={handleChange}
+              value={formData.department}
+            />
+            <button type="submit" className="btn btn-primary mt-4 w-full" disabled={isLoading}>
+              {loading ? <span className="loading loading-ring loading-sm"></span> : "Create"}
+            </button>
+          </div>
+        </form>
+      )}
       {toastMessage && <Toast message={toastMessage} />}
     </section>
   );

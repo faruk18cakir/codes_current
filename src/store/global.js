@@ -9,6 +9,7 @@ export const GlobalStateProvider = ({ children }) => {
   const [userType, setUserType] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userID, setUserID] = useState(null);
   const [token, setToken] = useState(null);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export const GlobalStateProvider = ({ children }) => {
           if (response.ok) {
             const data = await response.json();
             setUserType(data.user.role);
+            setUserID(data.profile._id);
             setIsLoading(false);
             setIsLoggedIn(true);
             setToken(storedToken);
@@ -53,7 +55,18 @@ export const GlobalStateProvider = ({ children }) => {
 
   return (
     <GlobalStateContext.Provider
-      value={{ userType, setUserType, isLoggedIn, setIsLoggedIn, isLoading, setIsLoading, token, setToken }}>
+      value={{
+        userID,
+        setUserID,
+        userType,
+        setUserType,
+        isLoggedIn,
+        setIsLoggedIn,
+        isLoading,
+        setIsLoading,
+        token,
+        setToken,
+      }}>
       {children}
     </GlobalStateContext.Provider>
   );

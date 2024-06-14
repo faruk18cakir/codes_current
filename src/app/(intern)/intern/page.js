@@ -5,22 +5,29 @@ import Loading from "../../../components/loading";
 import { useGlobalState } from "../../../store/global";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Toast from "../../../components/toast";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const Application = () => {
-  const { token, setIsLoading, isLoading } = useGlobalState();
+  const { userID, token, setIsLoading, isLoading, isLoggedIn } = useGlobalState();
   const router = useRouter();
-  const { id } = useParams();
+
   const [applications, setApplications] = useState([]);
   const [modalAppId, setModalAppId] = useState(null);
+  const [modalRating, setModalRating] = useState(null);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const [modalShowCommentId, setModalShowCommentId] = useState(null);
+  const [modalShowComment, setModalShowComment] = useState("");
+  const [modalShowCommentRating, setModalShowCommentRating] = useState(null);
+
+  const [toastMessage, setToastMessage] = useState("");
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    if (token) {
-      fetchApplications();
-    } else {
-      router.push("/login");
-    }
+    fetchApplications();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -36,6 +43,8 @@ const Application = () => {
       const data = await response.json();
       if (data.response) {
         setApplications(data.applications);
+        const userId = data.applications[0]?.intern._id;
+        fetchReviewsAdvert(userId);
       } else {
         setApplications([]);
       }
@@ -46,48 +55,136 @@ const Application = () => {
     }
   };
 
+  const fetchReviewsAdvert = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/api/reviews/interns/${userID}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (data) {
+        setReviews(data.reviews);
+      } else {
+        setApplications([]);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveRating = async (application) => {
+    try {
+      const payload = {
+        score: parseInt(modalRating),
+        comment: modalMessage,
+        advert: application.advert?._id,
+      };
+      const response = await fetch(`${apiUrl}/api/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Ensure token is correctly set and valid
+        },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        setToastMessage("Poulama başarıyla kaydedildi");
+        resetModalForm();
+        fetchReviewsAdvert();
+        setTimeout(() => {
+          setToastMessage("");
+        }, 3000);
+      } else {
+        setToastMessage("Poulama kaydinda hata oluştu");
+        setTimeout(() => {
+          setToastMessage("");
+        }, 3000);
+      }
+    } catch (error) {
+      setToastMessage("Poulama kaydinda hata oluştu");
+      setTimeout(() => {
+        setToastMessage("");
+      }, 3000);
+    }
+  };
+
+  const resetModalForm = () => {
+    setModalAppId(null);
+    setModalRating(0);
+    setModalMessage("");
+  };
+
+  if (isLoading || !isLoggedIn) {
+    return <Loading />;
+  }
+
   return (
-    <div className="w-screen flex justify-center items-start py-20 bg-base-100">
-      <div className="overflow-x-auto">
-        <h1 className="text-2xl font-bold mb-6">Kayıtlı Staj</h1>
-        {isLoading ? (
-          <Loading />
-        ) : applications.length === 0 ? (
-          <>
-            {" "}
-            <p>Kayıtlı Staj bulunamadı.</p>{" "}
-            <button
-              className="px-4 mt-5 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
-              onClick={() => router.back()}>
-              Geri
-            </button>
-          </>
+    <section className="w-screen flex justify-center pb-5 mt-72 sm:mt-20  bg-base-100">
+      <div className="w-screen max-w-[1200px] px-1 sm:px-10">
+        <h1 className="text-2xl font-bold mb-4">Kayıtlı Staj</h1>
+        {applications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-center text-3xl text-gray-500 mt-10">Kayıtlı Staj bulunamadı.!!!</div>
+            <p className="text-center text-red-500 mt-4"> Önemly : Başvuru yapmadan önce profilinizi oluşturun</p>
+          </div>
         ) : (
-          <>
-            {" "}
-            <table className="table table-zebra bg-base-200">
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full bg-base-200 rounded-lg">
               <thead>
-                <tr className="text-center">
-                  <th>#</th>
-                  <th>Stajın İsmi</th>
-                  <th>Staj Başvuru Durumu</th>
-                  <th>Değerlendirmede</th>
+                <tr className="bg-base-300 text-left">
+                  <th className="px-4 py-2">#</th>
+                  <th className="px-4 py-2">Stajın İsmi</th>
+                  <th className="px-4 py-2">Staj Başvuru Durumu</th>
+                  <th className="px-4 py-2">Değerlendirmede</th>
                 </tr>
               </thead>
               <tbody>
                 {applications
                   .filter((app) => app.status === "accepted" || app.status === "rejected")
                   .map((application, index) => (
-                    <tr key={application._id} className="text-center">
-                      <th>{index + 1}</th>
-                      <td className="capitalize font-bold text-xl">{application.advert.title}</td>
-                      <td className="capitalize font-bold text-xl">{application.status}</td>
-                      <td>
-                        <button
-                          onClick={() => setModalAppId(application._id)}
-                          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
-                          Pounlama
-                        </button>
+                    <tr key={application._id} className="bg-base-100 border-b border-base-300 text-left">
+                      <th className="px-4 py-2">{index + 1}</th>
+                      <td className="px-4 py-2 font-bold text-primary">{application.advert.title}</td>
+                      <td
+                        className={`px-4 py-2 ${
+                          application.status === "pending"
+                            ? "text-gray-500"
+                            : application.status === "accepted"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}>
+                        {application.status === "pending"
+                          ? "Değerlendirmede"
+                          : application.status === "accepted"
+                          ? "Onaylandı"
+                          : "Red oldu"}
+                      </td>
+                      <td className="px-4 py-2 h-2">
+                        {reviews?.find((item) => item.advert === application.advert._id) ? (
+                          <div
+                            className=" text-accent hover:text-primary hover:cursor-pointer"
+                            onClick={() => {
+                              setModalShowCommentId(application._id);
+                              // Get comment and rating from reviews
+                              const review = reviews?.find((item) => item.advert === application.advert._id);
+                              setModalShowComment(review?.comment || "");
+                              setModalShowCommentRating(review?.score || 0);
+                            }}>
+                            Zaten pounlandı
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setModalAppId(application._id)}
+                            className="px-4 py-1 rounded-md bg-primary text-primary-content ">
+                            Pounlama
+                          </button>
+                        )}
+
                         {modalAppId === application._id && (
                           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                             <div className="bg-white p-8 rounded-lg">
@@ -96,9 +193,13 @@ const Application = () => {
                               <textarea
                                 className="w-full p-2 border border-gray-300 rounded-md mb-4"
                                 rows="4"
+                                value={modalMessage}
+                                onChange={(e) => setModalMessage(e.target.value)}
                                 placeholder="Değerlendirme"
                               />
-                              <select className="w-full p-2 border border-gray-300 rounded-md mb-4">
+                              <select
+                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                                onChange={(e) => setModalRating(e.target.value)}>
                                 <option value="">Pounla</option>
                                 {Array.from({ length: 5 }, (_, i) => (
                                   <option key={i + 1} value={i + 1}>
@@ -113,9 +214,33 @@ const Application = () => {
                                   Geri
                                 </button>
                                 <button
-                                  onClick={() => handleSaveRating(application._id)}
+                                  onClick={() => handleSaveRating(application)}
                                   className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
                                   Kaydet
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {modalShowCommentId === application._id && (
+                          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
+                            <div className="bg-white p-8 rounded-lg text-left min-w-[350px] max-w-96 max-h-96 ">
+                              <h2 className="text-2xl font-bold mb-4">Pounlama</h2>
+                              <p className="capitalize font-bold text-xl p-2">{application.advert.title}</p>
+                              <p className="capitalize font-bold text-md p-2">Mesaj : {modalShowComment}</p>
+                              <p className="capitalize font-bold text-xl  p-2">
+                                Yıldız :{" "}
+                                {Array.from({ length: modalShowCommentRating }, () => (
+                                  <span className="text-yellow-500 mr-1" key={modalShowCommentRating}>
+                                    ★
+                                  </span>
+                                ))}
+                              </p>
+                              <div className="flex justify-end items-end">
+                                <button
+                                  onClick={() => setModalShowCommentId(null)}
+                                  className="px-4 max-h-10 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                  Geri
                                 </button>
                               </div>
                             </div>
@@ -126,10 +251,11 @@ const Application = () => {
                   ))}
               </tbody>
             </table>
-          </>
+          </div>
         )}
       </div>
-    </div>
+      {toastMessage && <Toast message={toastMessage} />}
+    </section>
   );
 };
 
