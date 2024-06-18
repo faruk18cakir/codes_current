@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const Intern = require("../models/intern");
-const Company = require("../models/company");
+const Match = require("../models/match");
 const Advert = require("../models/advert");
 const Application = require("../models/application");
 const config = require("config");
@@ -73,7 +73,27 @@ router.get("/advert/:id", authenticateUser, async (req, res) => {
     const applications = await Application.find({ advert: id })
       .populate("intern")
       .populate("advert");
-    res.status(200).send({ response: true, applications });
+    let applicationArray = [];
+    for (let application of applications) {
+      const match = await Match.findOne({
+        $or: [
+          { intern_id: application.intern._id },
+          { intern_id: application.intern.user },
+        ],
+      });
+      for (let m of match?.matches) {
+        if (m.advert_id._id.toString() === advert._id.toString()) {
+          applicationArray.push({
+            ...application.toObject(),
+            score: m.match_score,
+          });
+        }
+      }
+    }
+    res.status(200).send({
+      response: true,
+      applications: applicationArray,
+    });
   } catch (error) {
     console.error("Error fetching applications:", error);
     res.status(500).send({
@@ -89,30 +109,44 @@ router.patch("/accept/:id", authenticateUser, async (req, res) => {
     const { user } = req;
 
     if (user.role !== "company") {
-      return res.status(403).send({ response: false, error: "Only companies can accept applications." });
+      return res.status(403).send({
+        response: false,
+        error: "Only companies can accept applications.",
+      });
     }
 
-    console.log(id)
     const application = await Application.findById(id).populate("advert");
 
     if (!application) {
-      return res.status(404).send({ response: false, error: "Application not found." });
+      return res
+        .status(404)
+        .send({ response: false, error: "Application not found." });
     }
 
     const advert = await Advert.findById(application.advert._id);
 
     if (advert.company?._id.toString() !== user.company.toString()) {
-      return res.status(403).send({ response: false, error: "Unauthorized to accept this application." });
+      return res.status(403).send({
+        response: false,
+        error: "Unauthorized to accept this application.",
+      });
     }
 
     application.status = "accepted";
 
     await application.save();
 
-    res.status(200).send({ response: true, message: "Application successfully accepted.", application });
+    res.status(200).send({
+      response: true,
+      message: "Application successfully accepted.",
+      application,
+    });
   } catch (error) {
     console.error("Error accepting application:", error);
-    res.status(500).send({ response: false, error: "An error occurred while accepting the application." });
+    res.status(500).send({
+      response: false,
+      error: "An error occurred while accepting the application.",
+    });
   }
 });
 
@@ -122,29 +156,44 @@ router.patch("/reject/:id", authenticateUser, async (req, res) => {
     const { user } = req;
 
     if (user.role !== "company") {
-      return res.status(403).send({ response: false, error: "Only companies can accept applications." });
+      return res.status(403).send({
+        response: false,
+        error: "Only companies can accept applications.",
+      });
     }
 
     const application = await Application.findById(id).populate("advert");
 
     if (!application) {
-      return res.status(404).send({ response: false, error: "Application not found." });
+      return res
+        .status(404)
+        .send({ response: false, error: "Application not found." });
     }
 
     const advert = await Advert.findById(application.advert._id);
 
     if (advert.company._id.toString() !== user.company.toString()) {
-      return res.status(403).send({ response: false, error: "Unauthorized to accept this application." });
+      return res.status(403).send({
+        response: false,
+        error: "Unauthorized to accept this application.",
+      });
     }
 
     application.status = "rejected";
 
     await application.save();
 
-    res.status(200).send({ response: true, message: "Application successfully rejected.", application });
+    res.status(200).send({
+      response: true,
+      message: "Application successfully rejected.",
+      application,
+    });
   } catch (error) {
     console.error("Error accepting application:", error);
-    res.status(500).send({ response: false, error: "An error occurred while accepting the application." });
+    res.status(500).send({
+      response: false,
+      error: "An error occurred while accepting the application.",
+    });
   }
 });
 
@@ -159,7 +208,9 @@ router.get("/own", authenticateUser, async (req, res) => {
         .populate("intern")
         .populate("advert");
     } else if (user.role === "company") {
-      const adverts = await Advert.find({ company: user.company }).select("_id");
+      const adverts = await Advert.find({ company: user.company }).select(
+        "_id"
+      );
       applications = await Application.find({
         advert: { $in: adverts.map((advert) => advert._id) },
       })

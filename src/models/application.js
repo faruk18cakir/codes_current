@@ -8,7 +8,7 @@ const applicationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Intern",
       autopopulate: {
-        select: "_id firstName lastName",
+        select: "_id firstName lastName user",
         maxDepth: 1,
       },
     },

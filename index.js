@@ -4,6 +4,7 @@ const userRoutes = require("./src/routes/user.js");
 const advertRouter = require("./src/routes/advert");
 const applicationRouter = require("./src/routes/application");
 const reviewRouter = require("./src/routes/review");
+const matchRouter = require("./src/routes/match");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
@@ -38,3 +39,4 @@ app.use("/api/users", userRoutes);
 app.use("/api/adverts", advertRouter);
 app.use("/api/applications", applicationRouter);
 app.use("/api/reviews", reviewRouter);
+app.use("/api/matches", matchRouter);
