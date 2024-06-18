@@ -171,13 +171,13 @@ export default function UserApplications() {
               {modalContent.company && (
                 <>
                   <p>
-                    <strong>Requirements:</strong> {modalContent.requirements}
+                    <strong>İstenilenler:</strong> {modalContent.requirements}
                   </p>
                   <p>
-                    <strong>Foreign Languages:</strong> {modalContent.foreignLanguages}
+                    <strong>Yabancı Dil:</strong> {modalContent.foreignLanguages}
                   </p>
                   <p>
-                    <strong>Department:</strong> {modalContent.department}
+                    <strong>Bölüm:</strong> {modalContent.department}
                   </p>
                 </>
               )}

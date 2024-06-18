@@ -83,7 +83,7 @@ export default function LoginCompany() {
       <div className="card shadow-xl w-full sm:w-96 bg-base-100">
         <div className="card-body p-6">
           <h1 className="text-3xl text-center font-bold mb-2">Hoş Geldin!</h1>
-          <p className="text-base-content text-center mb-4">Inanılmaz bir deneyim yaşamak için lütfen giriş yap.</p>
+          <p className="text-base-content text-center mb-4">İnanılmaz bir deneyim yaşamak için lütfen giriş yap.</p>
           <form onSubmit={handleSubmit}>
             <div className="form-control">
               <label className="label mb-2 ">Kullanıcı Adı</label>

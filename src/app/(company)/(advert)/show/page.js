@@ -13,11 +13,8 @@ export default function Apply() {
   const router = useRouter();
 
   useEffect(() => {
-    if (token) {
-      fetchAdverts();
-    } else {
-      router.push("/login");
-    }
+    fetchAdverts();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -78,7 +75,7 @@ export default function Apply() {
         {adverts.length === 0 ? (
           <div className="flex flex-col items-center justify-center">
             <div className="text-center text-3xl text-gray-500 mt-10">Kayıtlı İlan bulunamadı.!!!</div>
-            <p className="text-center text-red-500 mt-4"> Önemly : İlan vermeden önce profilinizi oluşturun</p>
+            <p className="text-center text-red-500 mt-4"> Önemli : İlan vermeden önce profilinizi oluşturun</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -109,13 +106,13 @@ export default function Apply() {
                           return (
                             data.applications.length > 0 &&
                             data.applications.filter((app) => app.status === "pending").length > 0 && (
-                              <div className="indicator">
+                              <div>
                                 <button
                                   onClick={() => handleViewApplicants(advert._id)}
                                   className="px-4 py-1 rounded-md bg-primary text-primary-content ">
                                   İlana Başvuranlar
                                 </button>
-                                <span className="badge badge-sm bg-warning indicator">
+                                <span className="rounded-full px-3 bg-warning">
                                   {data.applications.filter((app) => app.status === "pending").length}
                                 </span>
                               </div>

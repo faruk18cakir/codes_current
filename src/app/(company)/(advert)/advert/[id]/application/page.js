@@ -111,7 +111,7 @@ const Application = () => {
                     <th className="px-4 py-2">{index + 1}</th>
                     <td className="px-4 py-2 font-bold text-primary">{application.intern.firstName}</td>
                     <td className="px-4 py-2 font-bold text-primary">{application.intern.lastName}</td>
-                    <td className="px-4 py-2 capitalize font-bold text-xl">{application.__v}</td>
+                    <td className="px-4 py-2 capitalize font-bold text-xl">{application.score}</td>
                     <td className="px-4 py-2 flex flex-col justify-start items-start gap-1">
                       <button
                         onClick={() => handelAcceptApplication(application._id)}

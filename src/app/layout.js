@@ -22,6 +22,7 @@ function RootLayout({ children }) {
     if (!token) {
       router.push("/login");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storedToken]); // Add storedToken to the dependency array
 
   return (

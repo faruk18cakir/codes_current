@@ -10,9 +10,9 @@ import { useGlobalState } from "../../../store/global";
 import Loading from "../../../components/loading";
 import Toast from "../../../components/toast";
 
-const languages = ["İngilizce", "Almanca", "Fransızca"];
+const languages = ["İngilizce", "Almanca", "Fransızca", "Arapça", "Rusça"];
 const languageLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
-const skillLevels = ["başlangıç", "orta", "ileri"];
+const skillLevels = ["Başlangıç Seviye", "Orta Seviye", "İleri Seviye"];
 
 languages.forEach((language) => {
   languageLevels[language] =
@@ -245,13 +245,13 @@ export default function Profile() {
     return <Loading />;
   }
 
-  const handleChange = (e, field) => {
-    const { value } = e.target;
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
-  };
+const handleChange = (e, field) => {
+  const { value } = e.target;
+  setFormData((formData) => ({
+    ...formData,
+    [field]: value,
+  }));
+};
 
   return (
     <section className="w-screen flex justify-center items-start  mt-72 sm:mt-20  bg-base-100">
@@ -267,14 +267,14 @@ export default function Profile() {
             E-posta : <strong>{formData.email}</strong>
           </label>
           <label className="label flex justify-between text-error">
-            Adınız:
+            Ad:
             <input
               type="text"
               className="input input-bordered ml-2 input-primary input-sm w-1/2 bg-transparent "
               placeholder={formData.firstName || "Ad"}
               required
               name="firstName"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "firstName")}
               value={formData.firstName}
             />
           </label>
@@ -286,7 +286,7 @@ export default function Profile() {
               placeholder={formData.lastName || "Soyad"}
               required
               name="lastName"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "lastName")}
               value={formData.lastName}
             />
           </label>
@@ -308,7 +308,7 @@ export default function Profile() {
               className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="Telefon"
               name="phone"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "phone")}
               value={formData.phone}
             />
           </label>
@@ -319,7 +319,7 @@ export default function Profile() {
               className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="Adres"
               name="address"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "address")}
               value={formData.address}
             />
           </label>
@@ -331,7 +331,7 @@ export default function Profile() {
               placeholder="Üniversite"
               required
               name="university"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "university")}
               value={formData.university}
             />
           </label>
@@ -343,7 +343,7 @@ export default function Profile() {
               placeholder="Bölüm"
               required
               name="department"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "department")}
               value={formData.department}
             />{" "}
           </label>
@@ -357,7 +357,7 @@ export default function Profile() {
               placeholder="Sınıf"
               required
               name="class"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "class")}
               value={formData.class}
             />
           </label>
@@ -370,7 +370,7 @@ export default function Profile() {
               placeholder="GPA"
               required
               name="gpa"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "gpa")}
               value={formData.gpa}
             />
           </label>
@@ -382,20 +382,20 @@ export default function Profile() {
               className="input input-bordered input-primary input-sm w-1/2 bg-transparent "
               placeholder="Deneyim"
               name="experience"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "experience")}
               value={formData.experience}
             />
           </label>
 
           <label className="label flex justify-between text-error">
-            İstenilen Alan:
+           Çalışmak İstenilen Alan:
             <input
               type="text"
               className="input input-bordered input-primary input-sm w-1/2  bg-transparent "
               placeholder="İstenilen Alan"
               required
               name="desiredField"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e, "desiredField")}
               value={formData.desiredField}
             />{" "}
           </label>
@@ -527,53 +527,53 @@ export default function Profile() {
           </div>
 
           <label className="label flex justify-between text-error">
-            Teamwork Skills:
+            Takım Çalışması Becerisi:
             <select
               className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
               required
               name="teamwork"
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
               value={formData.teamwork}>
               <option value="" disabled className="text-gray-200">
                 Lütfen seçin
               </option>
-              <option value="Medium">Medium</option>
-              <option value="Good">Good</option>
-              <option value="Very Good">Very Good</option>
+              <option value="Medium">Orta</option>
+              <option value="Good">İyi</option>
+              <option value="Very Good">Çok İyi</option>
             </select>{" "}
           </label>
 
           <label className="label flex justify-between text-error">
-            Communication Skills:
+            İletişim Becerisi:
             <select
               className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
               required
               name="communicationSkills"
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
               value={formData.communicationSkills}>
               <option value="" disabled className="text-gray-200">
                 Lütfen seçin
               </option>
-              <option value="Medium">Medium</option>
-              <option value="Good">Good</option>
-              <option value="Very Good">Very Good</option>
+              <option value="Medium">Orta</option>
+              <option value="Good">İyi</option>
+              <option value="Very Good">Çok İyi</option>
             </select>
           </label>
 
           <label className="label flex justify-between text-error">
-            Analytical Skills:
+            Analitik Beceri:
             <select
               className="select select-bordered select-primary select-sm w-1/2 bg-transparent "
               required
               name="analyticalSkills"
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
               value={formData.analyticalSkills}>
               <option value="" disabled className="text-gray-200">
                 Lütfen seçin
               </option>
-              <option value="Medium">Medium</option>
-              <option value="Good">Good</option>
-              <option value="Very Good">Very Good</option>
+              <option value="Medium">Orta</option>
+              <option value="Good">İyi</option>
+              <option value="Very Good">Çok İyi</option>
             </select>
           </label>
 

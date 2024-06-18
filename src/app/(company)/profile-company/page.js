@@ -127,8 +127,8 @@ export default function Profile() {
         className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 md:flex-row md:items-start md:space-x-6 pb-2 gap-2"
         onSubmit={handleSubmit}>
         <div className="w-full max-w-md p-6 bg-base-200 md:w-1/2 rounded-lg h-fit">
-          <h1 className="text-2xl font-bold mb-6">Profile Information</h1>
-          <label className="label mb-2 ">Username:</label>
+          <h1 className="text-2xl font-bold mb-6">Profil Bilgileri</h1>
+          <label className="label mb-2 ">Kullanıcı Adı:</label>
           <input
             type="text"
             className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -146,7 +146,7 @@ export default function Profile() {
             name="email"
             value={formData.email}
           />
-          <label className="label mb-2 ">Company Name:</label>
+          <label className="label mb-2 ">Şirket İsmi:</label>
           <input
             type="text"
             className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -156,7 +156,7 @@ export default function Profile() {
             onChange={handleChange}
             value={formData.companyName}
           />
-          <label className="label mb-2 ">Address:</label>
+          <label className="label mb-2 ">Adres:</label>
           <input
             type="text"
             className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -165,7 +165,7 @@ export default function Profile() {
             onChange={handleChange}
             value={formData.address}
           />
-          <label className="label mb-2 ">Sector:</label>
+          <label className="label mb-2 ">Sektör:</label>
           <input
             type="text"
             className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -174,7 +174,7 @@ export default function Profile() {
             onChange={handleChange}
             value={formData.sector}
           />
-          <label className="label mb-2 ">Phone:</label>
+          <label className="label mb-2 ">Telefon:</label>
           <input
             type="text"
             className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -192,7 +192,7 @@ export default function Profile() {
             onChange={handleChange}
             value={formData.faxNumber}
           />
-          <label className="label mb-2 ">About:</label>
+          <label className="label mb-2 ">Hakkında:</label>
           <textarea
             className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent "
             placeholder="About"

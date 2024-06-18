@@ -10,8 +10,7 @@ import Toast from "../../../components/toast";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const Application = () => {
-  const { userID, token, setIsLoading, isLoading, isLoggedIn } = useGlobalState();
-  const router = useRouter();
+  const { token, setIsLoading, isLoading, isLoggedIn } = useGlobalState();
 
   const [applications, setApplications] = useState([]);
   const [modalAppId, setModalAppId] = useState(null);
@@ -27,7 +26,6 @@ const Application = () => {
 
   useEffect(() => {
     fetchApplications();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -58,7 +56,7 @@ const Application = () => {
   const fetchReviewsAdvert = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/api/reviews/interns/${userID}`, {
+      const response = await fetch(`${apiUrl}/api/reviews/adverts/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -94,13 +92,14 @@ const Application = () => {
       });
       if (response.ok) {
         setToastMessage("Poulama başarıyla kaydedildi");
-        resetModalForm();
-        fetchReviewsAdvert();
+        //resetModalForm();
+        //fetchReviewsAdvert();
         setTimeout(() => {
           setToastMessage("");
         }, 3000);
       } else {
-        setToastMessage("Poulama kaydinda hata oluştu");
+        const data = await response.json();
+        setToastMessage(data.message);
         setTimeout(() => {
           setToastMessage("");
         }, 3000);
@@ -127,10 +126,10 @@ const Application = () => {
     <section className="w-screen flex justify-center pb-5 mt-72 sm:mt-20  bg-base-100">
       <div className="w-screen max-w-[1200px] px-1 sm:px-10">
         <h1 className="text-2xl font-bold mb-4">Kayıtlı Staj</h1>
-        {applications.length === 0 ? (
+        {applications.filter((app) => app.status === "accepted" || app.status === "rejected").length === 0 ? (
           <div className="flex flex-col items-center justify-center">
             <div className="text-center text-3xl text-gray-500 mt-10">Kayıtlı Staj bulunamadı.!!!</div>
-            <p className="text-center text-red-500 mt-4"> Önemly : Başvuru yapmadan önce profilinizi oluşturun</p>
+            <p className="text-center text-red-500 mt-4"> Önemli : Başvuru yapmadan önce profilinizi oluşturun</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -150,38 +149,59 @@ const Application = () => {
                     <tr key={application._id} className="bg-base-100 border-b border-base-300 text-left">
                       <th className="px-4 py-2">{index + 1}</th>
                       <td className="px-4 py-2 font-bold text-primary">{application.advert.title}</td>
-                      <td
-                        className={`px-4 py-2 ${
-                          application.status === "pending"
-                            ? "text-gray-500"
-                            : application.status === "accepted"
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }`}>
-                        {application.status === "pending"
-                          ? "Değerlendirmede"
-                          : application.status === "accepted"
-                          ? "Onaylandı"
-                          : "Red oldu"}
+                      <td className={`px-4 py-2 `}>
+                        {reviews?.find(
+                          (item) =>
+                            item.advert === application.advert._id &&
+                            item.reviewer === "company" &&
+                            item.intern._id === application.intern._id
+                        ) && (
+                          <div
+                            className=" text-success hover:text-primary hover:cursor-pointer"
+                            onClick={() => {
+                              setModalShowCommentId(application._id);
+                              // Get comment and rating from reviews
+                              const review = reviews?.find(
+                                (item) =>
+                                  item.advert === application.advert._id &&
+                                  item.reviewer === "company" &&
+                                  item.intern._id === application.intern._id
+                              );
+                              setModalShowComment(review?.comment || "");
+                              setModalShowCommentRating(review?.score || 0);
+                            }}>
+                            Değerlendirildi
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-2 h-2">
-                        {reviews?.find((item) => item.advert === application.advert._id) ? (
+                        {reviews?.find(
+                          (item) =>
+                            item.advert === application.advert._id &&
+                            item.reviewer === "intern" &&
+                            item.intern._id === application.intern._id
+                        ) ? (
                           <div
                             className=" text-accent hover:text-primary hover:cursor-pointer"
                             onClick={() => {
                               setModalShowCommentId(application._id);
                               // Get comment and rating from reviews
-                              const review = reviews?.find((item) => item.advert === application.advert._id);
+                              const review = reviews?.find(
+                                (item) =>
+                                  item.advert === application.advert._id &&
+                                  item.reviewer === "intern" &&
+                                  item.intern._id === application.intern._id
+                              );
                               setModalShowComment(review?.comment || "");
                               setModalShowCommentRating(review?.score || 0);
                             }}>
-                            Zaten pounlandı
+                            Zaten puanlandı
                           </div>
                         ) : (
                           <button
                             onClick={() => setModalAppId(application._id)}
                             className="px-4 py-1 rounded-md bg-primary text-primary-content ">
-                            Pounlama
+                            Puanlama
                           </button>
                         )}
 
@@ -190,35 +210,38 @@ const Application = () => {
                             <div className="bg-white p-8 rounded-lg">
                               <h2 className="text-2xl font-bold mb-4">Pounlama</h2>
                               <p className="capitalize font-bold text-xl p-2">{application.advert.title}</p>
-                              <textarea
-                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
-                                rows="4"
-                                value={modalMessage}
-                                onChange={(e) => setModalMessage(e.target.value)}
-                                placeholder="Değerlendirme"
-                              />
-                              <select
-                                className="w-full p-2 border border-gray-300 rounded-md mb-4"
-                                onChange={(e) => setModalRating(e.target.value)}>
-                                <option value="">Pounla</option>
-                                {Array.from({ length: 5 }, (_, i) => (
-                                  <option key={i + 1} value={i + 1}>
-                                    {i + 1}
-                                  </option>
-                                ))}
-                              </select>
-                              <div className="flex justify-end">
-                                <button
-                                  onClick={() => setModalAppId(null)}
-                                  className="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 mr-2">
-                                  Geri
-                                </button>
-                                <button
-                                  onClick={() => handleSaveRating(application)}
-                                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
-                                  Kaydet
-                                </button>
-                              </div>
+                              <form>
+                                <textarea
+                                  className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                                  rows="4"
+                                  value={modalMessage}
+                                  required
+                                  onChange={(e) => setModalMessage(e.target.value)}
+                                  placeholder="Değerlendirme"
+                                />
+                                <select
+                                  className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                                  onChange={(e) => setModalRating(e.target.value)}>
+                                  <option value="">Pounla</option>
+                                  {Array.from({ length: 5 }, (_, i) => (
+                                    <option key={i + 1} value={i + 1}>
+                                      {i + 1}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div className="flex justify-end">
+                                  <button
+                                    onClick={() => setModalAppId(null)}
+                                    className="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 mr-2">
+                                    Geri
+                                  </button>
+                                  <button
+                                    onClick={() => handleSaveRating(application)}
+                                    className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                                    Kaydet
+                                  </button>
+                                </div>
+                              </form>
                             </div>
                           </div>
                         )}

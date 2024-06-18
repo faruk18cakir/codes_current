@@ -158,15 +158,15 @@ export default function Advert() {
       {formProfileData.companyName==="" || formProfileData.companyName===null ? (
         <div className="flex flex-col items-center justify-center">
           <div className="text-center text-3xl text-gray-500 mt-10">Profilinizi oluşturun.!!!</div>
-          <p className="text-center text-red-500 mt-4"> Önemly : İlan vermeden önce profilinizi oluşturun</p>
+          <p className="text-center text-red-500 mt-4"> Önemli : İlan vermeden önce profilinizi oluşturun</p>
         </div>
       ) : (
         <form
           className="flex flex-col w-screen h-fit justify-center items-center bg-base-100 pb-2 gap-2"
           onSubmit={handleSubmit}>
           <div className="w-full max-w-md p-6 bg-base-200 rounded-lg h-fit">
-            <h1 className="text-2xl font-bold mb-6">Advert Information</h1>
-            <label className="label mb-2 ">Title:</label>
+            <h1 className="text-2xl font-bold mb-6">İlan Bilgileri</h1>
+            <label className="label mb-2 ">İlanın İsmi:</label>
             <input
               type="text"
               className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -177,7 +177,7 @@ export default function Advert() {
               value={formData.title}
             />
             <label className="label mb-2  flex justify-start">
-              <span className="text-error">*</span>Field:
+              <span className="text-error">*</span>Alan:
             </label>
             <input
               type="text"
@@ -189,7 +189,7 @@ export default function Advert() {
               value={formData.field}
             />
             <label className="label mb-2  flex justify-start">
-              <span className="text-error">*</span>Requirements:
+              <span className="text-error">*</span>İstenilenler:
             </label>
             <textarea
               className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent  leading-tight p-4"
@@ -200,7 +200,7 @@ export default function Advert() {
               value={formData.requirements}
             />
             <label className="label mb-2  flex justify-start">
-              <span className="text-error">*</span>Foreign Languages:
+              <span className="text-error">*</span>Yabancı Dil:
             </label>
             <textarea
               className="textarea textarea-bordered textarea-primary textarea-sm w-full bg-transparent  leading-tight p-4"
@@ -210,7 +210,7 @@ export default function Advert() {
               onChange={handleForeignLanguagesChange}
               value={formData.foreignLanguages}
             />
-            <label className="label mb-2 ">Department:</label>
+            <label className="label mb-2 ">Bölüm:</label>
             <input
               type="text"
               className="input input-bordered input-primary input-sm w-full bg-transparent "
