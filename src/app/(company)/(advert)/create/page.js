@@ -221,7 +221,7 @@ export default function Advert() {
               value={formData.department}
             />
             <button type="submit" className="btn btn-primary mt-4 w-full" disabled={isLoading}>
-              {loading ? <span className="loading loading-ring loading-sm"></span> : "Create"}
+              {loading ? <span className="loading loading-ring loading-sm"></span> : "Oluştur"}
             </button>
           </div>
         </form>

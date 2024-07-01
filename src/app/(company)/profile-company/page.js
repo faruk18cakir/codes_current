@@ -200,7 +200,7 @@ export default function Profile() {
             onChange={handleChange}
             value={formData.about}></textarea>
           <button type="submit" className="btn btn-primary w-full mt-10">
-            {loading ? <span className="loading loading-ring loading-sm"></span> : "Save Profile"}
+            {loading ? <span className="loading loading-ring loading-sm"></span> : "Profili Kaydet"}
           </button>
         </div>
       </form>

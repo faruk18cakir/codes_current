@@ -579,7 +579,7 @@ const handleChange = (e, field) => {
 
           <div className="flex flex-wrap gap-2  bg-slate-100 my-2 pt-2 rounded-md">
             <label className="label flex justify-between w-full">
-              Hobbies:
+              Hobiler:
               <div className="flex gap-2 mb-2 justify-end">
                 <input
                   type="text"

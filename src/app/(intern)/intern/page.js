@@ -91,7 +91,7 @@ const Application = () => {
         body: JSON.stringify(payload),
       });
       if (response.ok) {
-        setToastMessage("Poulama başarıyla kaydedildi");
+        setToastMessage("Puanlama başarıyla kaydedildi");
         //resetModalForm();
         //fetchReviewsAdvert();
         setTimeout(() => {
@@ -105,7 +105,7 @@ const Application = () => {
         }, 3000);
       }
     } catch (error) {
-      setToastMessage("Poulama kaydinda hata oluştu");
+      setToastMessage("Puanlama kaydinda hata oluştu");
       setTimeout(() => {
         setToastMessage("");
       }, 3000);
@@ -138,8 +138,8 @@ const Application = () => {
                 <tr className="bg-base-300 text-left">
                   <th className="px-4 py-2">#</th>
                   <th className="px-4 py-2">Stajın İsmi</th>
-                  <th className="px-4 py-2">Staj Başvuru Durumu</th>
-                  <th className="px-4 py-2">Değerlendirmede</th>
+                  <th className="px-4 py-2">Şirketin Görüşü</th>
+                  <th className="px-4 py-2">Değerlendir</th>
                 </tr>
               </thead>
               <tbody>
@@ -208,7 +208,7 @@ const Application = () => {
                         {modalAppId === application._id && (
                           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                             <div className="bg-white p-8 rounded-lg">
-                              <h2 className="text-2xl font-bold mb-4">Pounlama</h2>
+                              <h2 className="text-2xl font-bold mb-4">Puanlama</h2>
                               <p className="capitalize font-bold text-xl p-2">{application.advert.title}</p>
                               <form>
                                 <textarea
@@ -222,7 +222,7 @@ const Application = () => {
                                 <select
                                   className="w-full p-2 border border-gray-300 rounded-md mb-4"
                                   onChange={(e) => setModalRating(e.target.value)}>
-                                  <option value="">Pounla</option>
+                                  <option value="">Puanla</option>
                                   {Array.from({ length: 5 }, (_, i) => (
                                     <option key={i + 1} value={i + 1}>
                                       {i + 1}
@@ -248,7 +248,7 @@ const Application = () => {
                         {modalShowCommentId === application._id && (
                           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
                             <div className="bg-white p-8 rounded-lg text-left min-w-[350px] max-w-96 max-h-96 ">
-                              <h2 className="text-2xl font-bold mb-4">Pounlama</h2>
+                              <h2 className="text-2xl font-bold mb-4">Puanlama</h2>
                               <p className="capitalize font-bold text-xl p-2">{application.advert.title}</p>
                               <p className="capitalize font-bold text-md p-2">Mesaj : {modalShowComment}</p>
                               <p className="capitalize font-bold text-xl  p-2">

@@ -94,7 +94,7 @@ const Application = () => {
         body: JSON.stringify(payload),
       });
       if (response.ok) {
-        setToastMessage("Poulama başarıyla kaydedildi");
+        setToastMessage("Pualama başarıyla kaydedildi");
         resetModalForm();
         fetchReviewsAdvert();
         setTimeout(() => {
@@ -108,7 +108,7 @@ const Application = () => {
         }, 3000);
       }
     } catch (error) {
-      setToastMessage("Poulama kaydinda hata oluştu");
+      setToastMessage("Pualama kaydinda hata oluştu");
       setTimeout(() => {
         setToastMessage("");
       }, 3000);
@@ -144,8 +144,8 @@ const Application = () => {
                   <th className="px-4 py-2">Stajyer İsmi</th>
                   <th className="px-4 py-2">Stajyer Soysismi</th>
                   <th className="px-4 py-2">İlan İsmi</th>
-                  <th className="px-4 py-2">Değerlendirmede</th>
-                  <th className="px-4 py-2">kullanıcı</th>
+                  <th className="px-4 py-2">Değerlendirme</th>
+                  <th className="px-4 py-2">Stajyer Görüşü</th>
                 </tr>
               </thead>
               <tbody>
@@ -213,10 +213,10 @@ const Application = () => {
                               setModalShowCommentIntern(review?.comment || "");
                               setModalShowCommentRatingIntern(review?.score || 0);
                             }}>
-                            pounlandı
+                            puanlandı
                           </div>
                         ) : (
-                          <div className=" text-accent">pounlandmadı</div>
+                          <div className=" text-accent">puanlandmadı</div>
                         )}
                         {modalAppId === application._id && (
                           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

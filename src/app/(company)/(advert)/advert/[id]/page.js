@@ -94,11 +94,11 @@ export default function AdvertDetail() {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>Yükleniyor...</p>;
   }
 
   if (!advert) {
-    return <p>Advert not found.</p>;
+    return <p>İlan bulunamadı.</p>;
   }
 
   return (
@@ -107,8 +107,8 @@ export default function AdvertDetail() {
         {editMode ? (
           <div className="flex flex-col w-screen max-w-[550px] justify-center items-center bg-base-200 pb-2 gap-2">
             <div className="w-full max-w-md p-6 bg-base-100 rounded-lg h-fit">
-              <h1 className="text-2xl font-bold mb-6">Advert Information</h1>
-              <label className="label mb-2 ">Title:</label>
+              <h1 className="text-2xl font-bold mb-6">Staj İlanı Bilgileri</h1>
+              <label className="label mb-2 ">Stajın İsmi:</label>
               <input
                 type="text"
                 className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -119,7 +119,7 @@ export default function AdvertDetail() {
                 onChange={handleInputChange}
               />
               <label className="label mb-2  flex justify-start">
-                <span className="text-error">*</span>Field:
+                <span className="text-error">*</span>Alan:
               </label>
               <input
                 type="text"
@@ -131,7 +131,7 @@ export default function AdvertDetail() {
                 onChange={handleInputChange}
               />
               <label className="label mb-2  flex justify-start">
-                <span className="text-error">*</span>Requirements:
+                <span className="text-error">*</span>Stajyerden Beklenenler:
               </label>
               <textarea
                 className="textarea textarea-bordered textarea-primary textarea-md h-56 w-full bg-transparent  leading-tight p-4"
@@ -142,7 +142,7 @@ export default function AdvertDetail() {
                 onChange={handleInputChange}
               />
               <label className="label mb-2  flex justify-start">
-                <span className="text-error">*</span>Foreign Languages:
+                <span className="text-error">*</span>İstenilen Yabancı Dil:
               </label>
               <textarea
                 className="textarea textarea-bordered textarea-primary textarea-md w-full bg-transparent  leading-tight p-4"
@@ -152,7 +152,7 @@ export default function AdvertDetail() {
                 value={formValues.foreignLanguages}
                 onChange={handleInputChange}
               />
-              <label className="label mb-2 ">Department:</label>
+              <label className="label mb-2 ">İstenilen Bölüm:</label>
               <input
                 type="text"
                 className="input input-bordered input-primary input-sm w-full bg-transparent "
@@ -181,16 +181,16 @@ export default function AdvertDetail() {
           <div className="w-full max-w-md p-6 bg-base-100 rounded-lg h-fit">
             <h1 className="text-2xl font-bold mb-4">{advert.title}</h1>
             <p>
-              <strong>Field:</strong> {advert.field}
+              <strong>Alan:</strong> {advert.field}
             </p>
             <p>
-              <strong>Department:</strong> {advert.department}
+              <strong>İstenilen Bölüm:</strong> {advert.department}
             </p>
             <p>
-              <strong>Requirements:</strong> {advert.requirements}
+              <strong>Stajyerden Beklenenler:</strong> {advert.requirements}
             </p>
             <p>
-              <strong>Foreign Languages:</strong> {advert.foreignLanguages}
+              <strong>İstenilen Yabancı Dil:</strong> {advert.foreignLanguages}
             </p>
             <p>
               <strong>Oluşturulma Tarihi:</strong> {new Date(advert.createdAt).toLocaleDateString("tr-TR")}
